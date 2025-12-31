@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Card</title>
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .scene-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        #cardText {
+            position: absolute;
+
+            width: 220px;
+            height: 180px;
+
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+
+            padding: 14px 16px;
+            box-sizing: border-box;
+
+            color: #000000;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+
+        #cardText h1 {
+            margin: 0;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        #cardText p {
+            margin: 8px 0;
+            text-align: center;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        #cardText .signature {
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .snowflake {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-image: url("snowflake.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        @keyframes scatter {
+            from {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 1;
+            }
+
+            to {
+                transform: translate(var(--x), var(--y)) rotate(var(--rot));
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="container">
+        <img src="image1.png" id="image1" class="scene-image" />
+        <img src="image2.png" id="image2" class="scene-image" style="display:none;" />
+
+        <div id="cardText">
+            <h1>С Новым Годом, Радость!</h1>
+            <p>
+                Основной текст открытки.
+                Здесь будет поздравление или пожелание.
+            </p>
+            <div class="signature">Дед Мо<span>Ро</span>з.</div>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById("container");
+        const image1 = document.getElementById("image1");
+        const image2 = document.getElementById("image2");
+        const cardText = document.getElementById("cardText");
+
+        let opened = false;
+
+        container.addEventListener("click", () => {
+            if (opened) return;
+            opened = true;
+
+            const rect = container.getBoundingClientRect();
+
+            const flakesCount = 256;
+
+            for (let i = 0; i < flakesCount; i++) {
+                const flake = document.createElement("div");
+                flake.className = "snowflake";
+                document.body.appendChild(flake);
+
+                const startX = rect.left + rect.width * (0.3 + Math.random() * 0.4);
+                const startY = rect.top + rect.height * (0.3 + Math.random() * 0.4);
+
+                flake.style.left = startX + "px";
+                flake.style.top = startY + "px";
+                flake.style.opacity = 1;
+
+                flake.style.setProperty("--x", `${(Math.random() - 0.5) * 1200}px`);
+                flake.style.setProperty("--y", `${(Math.random() - 0.5) * 1200}px`);
+                flake.style.setProperty("--rot", `${Math.random() * 720}deg`);
+
+                flake.style.animation = "scatter 1.6s ease-out forwards";
+
+                flake.addEventListener("animationend", () => flake.remove());
+            }
+
+            image1.style.display = "none";
+            image2.style.display = "block";
+            cardText.style.display = "flex";
+        });
+    </script>
+
+</body>
+
+</html>
